@@ -23,6 +23,11 @@
                     <label>Excluded URLs (Regex, one per line):</label>
                     <textarea id="excluded-urls" rows="3" placeholder="^https://mail\.google\.com&#10;.*example\.com"></textarea>
                 </div>
+                <div class="setting-group">
+                    <label>Allowed Click URLs (Regex, one per line):</label>
+                    <textarea id="allowed-click-urls" rows="3" placeholder="^https://www\.google\.com&#10;^https://github\.com"></textarea>
+                    <p style="font-size: 0.8em; color: #666; margin-top: 4px;">For security, "click" actions are converted to "focus" by default unless the URL matches one of these patterns.</p>
+                </div>
             </div>
     
             <div class="section">

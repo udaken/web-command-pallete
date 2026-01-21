@@ -9,7 +9,8 @@
     // Config State
     let config = {
         shortcut: { key: 'p', ctrlKey: true, shiftKey: true, altKey: false, metaKey: false, code: 'KeyP' },
-        excludedUrls: ''
+        excludedUrls: '',
+        allowedClickUrls: ''
     };
 
     async function loadConfig() {
@@ -17,6 +18,7 @@
         if (data.config) {
             if (data.config.shortcut) config.shortcut = data.config.shortcut;
             if (data.config.excludedUrls) config.excludedUrls = data.config.excludedUrls;
+            if (data.config.allowedClickUrls) config.allowedClickUrls = data.config.allowedClickUrls;
         }
     }
 
@@ -29,6 +31,20 @@
                 if (new RegExp(p).test(currentUrl)) return true;
             } catch (e) {
                 console.warn('Invalid Exclude Regex:', p);
+            }
+        }
+        return false;
+    }
+
+    function isClickAllowed() {
+        if (!config.allowedClickUrls) return false;
+        const patterns = config.allowedClickUrls.split('\n').filter(p => p.trim());
+        const currentUrl = window.location.href;
+        for (const p of patterns) {
+            try {
+                if (new RegExp(p).test(currentUrl)) return true;
+            } catch (e) {
+                console.warn('Invalid Allowed Click Regex:', p);
             }
         }
         return false;
@@ -68,7 +84,13 @@
     palette.on('execute', (cmd) => {
         console.log("Executing:", cmd);
 
-        const action = cmd.action || 'click'; // Default action
+        let action = cmd.action || 'click'; // Default action
+
+        // Security: Demote click to focus if not allowed
+        if (action === 'click' && !isClickAllowed()) {
+            console.warn("Web Command Palette: 'click' action demoted to 'focus' for security. Configure 'Allowed Click URLs' in options to enable.");
+            action = 'focus';
+        }
 
         if (action === 'options') {
             window.open(chrome.runtime.getURL('options/index.html'), '_blank');

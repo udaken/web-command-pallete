@@ -37,6 +37,7 @@ Open the extension **Options** page to configure your rules.
 ### 1. General Settings
 - **Keyboard Shortcut:** Click the input and press your desired key combination to change the activation shortcut.
 - **Excluded URLs:** Prevent the palette from opening on specific sites (supports Regex).
+- **Allowed Click URLs:** For security, `click` actions are disabled by default. Add URL patterns (Regex) here to enable clicking on specific sites. If a site is not in this list, `click` actions will safely fallback to `focus`.
 
 ### 2. SITEINFO (Command Definitions)
 You can define commands using a JSON structure called **SITEINFO**. You can edit this directly in the "Custom SITEINFO" box or load it from external URLs.
@@ -66,11 +67,11 @@ Here is a rule for **Google Search**:
 ```
 
 ### 3. Reference
-| Property            | Type   | Description                                                                   |
-| :------------------ | :----- | :---------------------------------------------------------------------------- |
-| `name`              | String | (Optional) A friendly name for the site rule.                                 |
-| `url`               | String | **Required.** A Regular Expression to match the page URL.                     |
-| `commands`          | Array  | List of command objects.                                                      |
-| `commands[].xpath`  | String | **Required.** XPath expression to find the element.                           |
-| `commands[].action` | String | `click` (default) or `focus`.                                                 |
-| `commands[].title`  | String | Label in the palette. Auto-detected from element text/placeholder if omitted. |
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `name` | String | (Optional) A friendly name for the site rule. |
+| `url` | String | **Required.** A Regular Expression to match the page URL. |
+| `commands` | Array | List of command objects. |
+| `commands[].xpath` | String | **Required.** XPath expression to find the element. |
+| `commands[].action` | String | `click` or `focus` (default). Note: `click` only works on sites in the "Allowed Click URLs" list. |
+| `commands[].title` | String | Label in the palette. Auto-detected from element text/placeholder if omitted. |

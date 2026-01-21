@@ -2,6 +2,7 @@
 const shortcutInput = document.getElementById('shortcut-input');
 const resetShortcutButton = document.getElementById('reset-shortcut');
 const excludedUrlsInput = document.getElementById('excluded-urls');
+const allowedClickUrlsInput = document.getElementById('allowed-click-urls');
 const siteInfoUrlsInput = document.getElementById('siteinfo-urls');
 const siteInfoJsonInput = document.getElementById('siteinfo-json');
 const updateAllButton = document.getElementById('update-all');
@@ -85,6 +86,9 @@ async function loadSettings() {
     // 2. Excluded URLs
     excludedUrlsInput.value = config.excludedUrls || '';
 
+    // 2.5 Allowed Click URLs
+    allowedClickUrlsInput.value = config.allowedClickUrls || '';
+
     // 3. URLs
     siteInfoUrlsInput.value = (config.urls || []).join('\n');
 
@@ -155,6 +159,7 @@ updateAllButton.addEventListener('click', async () => {
         const config = {
             shortcut: currentShortcut,
             excludedUrls: excludedUrlsInput.value,
+            allowedClickUrls: allowedClickUrlsInput.value,
             urls: urls,
             localJson: siteInfoJsonInput.value
         };
