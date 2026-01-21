@@ -14,13 +14,11 @@ Web Command Palette is a lightweight browser extension that brings a VS Code-sty
 
 ## 🚀 Installation
 
-Currently, this extension is installed in **Developer Mode**:
-
-1.  Clone or download this repository to a folder on your computer.
-2.  Open your browser (Chrome, Edge, Brave, etc.) and go to `chrome://extensions`.
-3.  Enable **Developer mode** (toggle in the top-right corner).
-4.  Click **Load unpacked**.
-5.  Select the folder where you downloaded this project.
+### Chrome / Edge / Brave / Firefox
+1.  Clone or download this repository.
+2.  **Chrome/Edge:** Go to `chrome://extensions`, enable **Developer mode**, and click **Load unpacked**.
+3.  **Firefox:** Go to `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on...**, and select `manifest.json`.
+4.  Select the project folder (or the `manifest.json` file).
 
 ## 📖 Usage
 
