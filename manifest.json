@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Web Command Palette",
+  "version": "1.0.0",
+  "description": "A command palette for web pages.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "options_ui": {
+    "page": "options/index.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "background/service_worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/engine.js", "content/ui.js", "content/main.js"],
+      "run_at": "document_end"
+    }
+  ]
+}

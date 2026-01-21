@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Command Palette Options</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+        <div class="container">
+            <h1>Web Command Palette Options</h1>
+            
+            <div class="section">
+                <h2>General Settings</h2>
+                <div class="setting-group">
+                    <label>Keyboard Shortcut:</label>
+                    <div class="input-group">
+                        <input type="text" id="shortcut-input" placeholder="Click and press keys" readonly style="width: 200px;">
+                        <button id="reset-shortcut">Reset</button>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <label>Excluded URLs (Regex, one per line):</label>
+                    <textarea id="excluded-urls" rows="3" placeholder="^https://mail\.google\.com&#10;.*example\.com"></textarea>
+                </div>
+            </div>
+    
+            <div class="section">
+                <h2>SITEINFO URLs</h2>
+                <p>Load SITEINFO from multiple external URLs (one per line).</p>
+                <textarea id="siteinfo-urls" rows="3" placeholder="https://example.com/siteinfo.json"></textarea>
+                <button id="update-all">Update & Save All</button>
+            </div>
+    
+                    <div class="section">
+                        <h2>Custom SITEINFO (Local JSON)</h2>
+                        <p>Directly edit the SITEINFO definitions.</p>
+                                    <textarea id="siteinfo-json" rows="20" placeholder='[
+                            {
+                                "name": "Google Search",
+                                "url": "^https://www\\.google\\.com/",
+                                "commands": [
+                                    {
+                                        "title": "Focus Search Box",
+                                        "action": "focus",
+                                        "xpath": "//textarea[@name=\"q\"]"
+                                    },
+                                    {
+                                        "title": "I am Feeling Lucky",
+                                        "action": "click",
+                                        "xpath": "//input[@name=\"btnI\"]"
+                                    }
+                                ]
+                            }
+                        ]'></textarea>                <div class="actions">
+                    <span id="status"></span>
+                </div>
+            </div>
+        </div>    <script type="module" src="main.js"></script>
+</body>
+</html>

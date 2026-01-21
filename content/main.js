@@ -1,0 +1,139 @@
+(async () => {
+    // Wait for the namespace to be ready
+    const { CommandEngine, CommandPalette } = window.WebCommandPalette;
+
+    if (!CommandEngine || !CommandPalette) {
+        return;
+    }
+
+    // Config State
+    let config = {
+        shortcut: { key: 'p', ctrlKey: true, shiftKey: true, altKey: false, metaKey: false, code: 'KeyP' },
+        excludedUrls: ''
+    };
+
+    async function loadConfig() {
+        const data = await chrome.storage.local.get(['config']);
+        if (data.config) {
+            if (data.config.shortcut) config.shortcut = data.config.shortcut;
+            if (data.config.excludedUrls) config.excludedUrls = data.config.excludedUrls;
+        }
+    }
+
+    function isExcluded() {
+        if (!config.excludedUrls) return false;
+        const patterns = config.excludedUrls.split('\n').filter(p => p.trim());
+        const currentUrl = window.location.href;
+        for (const p of patterns) {
+            try {
+                if (new RegExp(p).test(currentUrl)) return true;
+            } catch (e) {
+                console.warn('Invalid Exclude Regex:', p);
+            }
+        }
+        return false;
+    }
+
+    function isShortcut(e) {
+        const s = config.shortcut;
+        // Strict modifier check
+        if (e.ctrlKey !== s.ctrlKey) return false;
+        if (e.shiftKey !== s.shiftKey) return false;
+        if (e.altKey !== s.altKey) return false;
+        if (e.metaKey !== s.metaKey) return false;
+
+        // Key check: Prefer code if available, fallback to key
+        if (s.code && e.code === s.code) return true;
+        if (e.key.toLowerCase() === s.key.toLowerCase()) return true;
+        
+        return false;
+    }
+
+    // Initialize Engine and UI
+    const engine = new CommandEngine();
+    const palette = new CommandPalette();
+
+    const paletteElement = palette.getElement();
+    if (paletteElement && document.body) {
+        document.body.appendChild(paletteElement);
+    } else {
+        return;
+    }
+
+    // Load Data
+    await engine.loadSiteInfo();
+    await loadConfig();
+
+    // Listen for execution events
+    palette.on('execute', (cmd) => {
+        console.log("Executing:", cmd);
+
+        const action = cmd.action || 'click'; // Default action
+
+        if (action === 'options') {
+            window.open(chrome.runtime.getURL('options/index.html'), '_blank');
+            return;
+        }
+
+        if (cmd.element) {
+            if (action === 'focus') {
+                cmd.element.focus();
+            } else {
+                // Default to click (and focus for better UX)
+                cmd.element.click();
+                if (typeof cmd.element.focus === 'function') {
+                    cmd.element.focus();
+                }
+            }
+        } else {
+            console.warn("Element not found for command:", cmd);
+        }
+    });
+
+    // Global Shortcut Listener
+    document.addEventListener('keydown', async (e) => {
+        if (isShortcut(e)) {
+            if (isExcluded()) {
+                console.log("Web Command Palette: URL is excluded.");
+                return;
+            }
+
+            console.log("Web Command Palette: Shortcut triggered");
+            e.preventDefault();
+            e.stopPropagation(); 
+            
+            if (palette.isOpen) {
+                palette.close();
+            } else {
+                let commands = engine.getCommandsForCurrentPage();
+                
+                commands.push({
+                    id: 'builtin-options',
+                    label: 'Configure Web Command Palette',
+                    action: 'options',
+                    element: null
+                });
+                
+                palette.setCommands(commands);
+                palette.open();
+            }
+        }
+    }, true);
+
+    // Listen for storage changes
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+        if (namespace === 'local') {
+            if (changes.siteinfo) {
+                engine.loadSiteInfo();
+                console.log("SITEINFO updated");
+            }
+            if (changes.config) {
+                loadConfig();
+                console.log("Config updated");
+            }
+        }
+    });
+
+    console.log("Web Command Palette: Ready (Polyfill + Configurable)");
+
+})();
