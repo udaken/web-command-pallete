@@ -40,7 +40,12 @@
                     <div class="section">
                         <h2>Custom SITEINFO (Local JSON)</h2>
                         <p>Directly edit the SITEINFO definitions.</p>
-                                    <textarea id="siteinfo-json" rows="20" placeholder='[
+                        <div class="setting-group">
+                            <button id="import-json">Import from File</button>
+                            <button id="export-json">Export to File</button>
+                            <input type="file" id="import-file" style="display: none;" accept=".json">
+                        </div>
+                        <textarea id="siteinfo-json" rows="20" placeholder='[
                             {
                                 "name": "Google Search",
                                 "url": "^https://www\\.google\\.com/",

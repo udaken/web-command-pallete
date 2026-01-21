@@ -6,6 +6,9 @@ const allowedClickUrlsInput = document.getElementById('allowed-click-urls');
 const siteInfoUrlsInput = document.getElementById('siteinfo-urls');
 const siteInfoJsonInput = document.getElementById('siteinfo-json');
 const updateAllButton = document.getElementById('update-all');
+const exportJsonButton = document.getElementById('export-json');
+const importJsonButton = document.getElementById('import-json');
+const importFileInput = document.getElementById('import-file');
 const statusSpan = document.getElementById('status');
 
 // Default Shortcut
@@ -95,6 +98,54 @@ async function loadSettings() {
     // 4. Local JSON
     siteInfoJsonInput.value = config.localJson || '[]';
 }
+
+// Export JSON
+exportJsonButton.addEventListener('click', () => {
+    try {
+        const jsonStr = siteInfoJsonInput.value.trim() || '[]';
+        // Validate before export to ensure it's at least valid JSON
+        JSON.parse(jsonStr);
+        
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'SITEINFO.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        showStatus('Exported!');
+    } catch (e) {
+        showStatus('Invalid JSON in textarea. Cannot export.', 'error');
+    }
+});
+
+// Import JSON
+importJsonButton.addEventListener('click', () => {
+    importFileInput.click();
+});
+
+importFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const content = event.target.result;
+            // Validate JSON
+            const json = JSON.parse(content);
+            validateSiteInfo(json);
+            
+            siteInfoJsonInput.value = JSON.stringify(json, null, 4);
+            showStatus('Imported! Don\'t forget to click "Update & Save All".');
+        } catch (err) {
+            showStatus(`Import Error: ${err.message}`, 'error');
+        }
+        // Reset input so the same file can be imported again if needed
+        importFileInput.value = '';
+    };
+    reader.readAsText(file);
+});
 
 // Validate JSON structure
 function validateSiteInfo(json) {
