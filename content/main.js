@@ -146,13 +146,6 @@
                 palette.close();
             } else {
                 let commands = engine.getCommandsForCurrentPage();
-                
-                commands.push({
-                    id: 'builtin-options',
-                    label: 'Configure Web Command Palette',
-                    action: 'options',
-                    element: null
-                });
 
                 commands.push({
                     id: 'builtin-debug',

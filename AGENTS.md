@@ -30,7 +30,6 @@ It works with Chrome and Firefox.
 - **Activation:** 
   - Pressing the configured shortcut (default `Ctrl+Alt+P`) displays the palette.
   - The palette filters commands based on the current URL.
-  - Includes a built-in command to open the Options page.
 - **Execution:** 
   - Selecting a command performs the specified action on the element found via XPath.
   - Automatically handles fallbacks for elements without direct text content.

@@ -27,8 +27,6 @@ Web Command Palette is a lightweight browser extension that brings a VS Code-sty
 2.  **Search:** Type to filter available commands.
 3.  **Execute:** Press `Enter` to run the selected command.
 
-**Tip:** You can always open the options page by running the "Configure Web Command Palette" command from the palette itself!
-
 ## ⚙️ Configuration
 
 Open the extension **Options** page to configure your rules.
