@@ -17,5 +17,11 @@
       "js": ["content/engine.js", "content/ui.js", "content/main.js"],
       "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["options/index.html", "options/main.js", "options/style.css"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }

@@ -77,6 +77,28 @@
         color: #999;
         text-align: center;
     }
+
+    .debug-info {
+        padding: 12px;
+        background: #111;
+        border-top: 1px solid #444;
+        font-size: 12px;
+        color: #888;
+        display: none;
+        max-height: 200px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+    }
+
+    .debug-info.visible {
+        display: block;
+    }
+
+    .debug-info h3 {
+        margin: 0 0 8px 0;
+        font-size: 14px;
+        color: #aaa;
+    }
     `;
 
     class CommandPaletteUI {
@@ -90,6 +112,7 @@
             this.filteredCommands = [];
             this.selectedIndex = 0;
             this.isOpen = false;
+            this.isDebugVisible = false;
             this.eventListeners = {}; // Simple event emitter
 
             this.init();
@@ -100,6 +123,7 @@
             this.input = this.shadowRoot.querySelector('input');
             this.resultsContainer = this.shadowRoot.querySelector('.results');
             this.hostContainer = this.shadowRoot.querySelector('.host'); // Wrapper for styles
+            this.debugContainer = this.shadowRoot.querySelector('.debug-info');
             
             this.input.addEventListener('input', (e) => this.filterCommands(e.target.value));
             this.input.addEventListener('keydown', (e) => this.handleKeydown(e));
@@ -128,6 +152,19 @@
         setCommands(commands) {
             this.commands = commands;
             this.filterCommands('');
+        }
+
+        setDebugInfo(info) {
+            this.debugContainer.innerHTML = `<h3>Debug Info</h3><div>${info}</div>`;
+        }
+
+        toggleDebug() {
+            this.isDebugVisible = !this.isDebugVisible;
+            if (this.isDebugVisible) {
+                this.debugContainer.classList.add('visible');
+            } else {
+                this.debugContainer.classList.remove('visible');
+            }
         }
 
         open() {
@@ -234,6 +271,7 @@
                     <div class="palette">
                         <input type="text" placeholder="Type a command..." />
                         <ul class="results"></ul>
+                        <div class="debug-info"></div>
                     </div>
                 </div>
             `;

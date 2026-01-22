@@ -13,6 +13,9 @@ It works with Chrome and Firefox.
   - **Multiple SITEINFO Sources:** Supports merging definitions from local JSON and multiple external URLs.
   - **Configurable Shortcut:** Users can change the activation key (default: `Ctrl+Shift+P`).
   - **Excluded URLs:** Support for regex-based URL exclusion.
+- **Debug Menu:** 
+  - Built-in command `Debug: Toggle Info` to display runtime information (URL, matched SITEINFO, settings).
+  - Uses `web_accessible_resources` to allow opening the options page from any site.
 
 ## Overview of Operation
 - **Data Loading:** 

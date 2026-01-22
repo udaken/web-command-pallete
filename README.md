@@ -9,6 +9,7 @@ Web Command Palette is a lightweight browser extension that brings a VS Code-sty
 - **Universal Command Palette:** Works on any website defined in your settings.
 - **Customizable Shortcuts:** Default is `Ctrl+Shift+P` (or `Cmd+Shift+P`), but you can make it yours.
 - **Powerful Definitions:** Use XPath to target any element.
+- **Debug Menu:** Easily check matched rules and current settings directly from the palette.
 - **Flexible Configuration:** Load rules from local JSON or subscribe to external URLs (e.g., GitHub Gists).
 - **Zero Dependencies:** Built with pure vanilla JavaScript for maximum speed and privacy.
 

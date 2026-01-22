@@ -97,6 +97,12 @@
             return;
         }
 
+        if (action === 'debug') {
+            palette.toggleDebug();
+            palette.open(); // Keep open to see debug info
+            return;
+        }
+
         if (cmd.element) {
             if (action === 'focus') {
                 cmd.element.focus();
@@ -135,6 +141,26 @@
                     action: 'options',
                     element: null
                 });
+
+                commands.push({
+                    id: 'builtin-debug',
+                    label: 'Debug: Toggle Info',
+                    action: 'debug',
+                    element: null
+                });
+                
+                // Prepare debug info
+                const matchedConfigs = engine.siteInfo.filter(info => {
+                    try { return new RegExp(info.url).test(window.location.href); } catch(e) { return false; }
+                });
+                const debugInfo = [
+                    `URL: ${window.location.href}`,
+                    `Matched SITEINFO: ${matchedConfigs.map(c => c.name || c.url).join(', ') || 'None'}`,
+                    `Total SITEINFO loaded: ${engine.siteInfo.length}`,
+                    `Click Allowed: ${isClickAllowed()}`,
+                    `Shortcut: ${config.shortcut ? JSON.stringify(config.shortcut) : 'Default'}`
+                ].join('<br>');
+                palette.setDebugInfo(debugInfo);
                 
                 palette.setCommands(commands);
                 palette.open();
