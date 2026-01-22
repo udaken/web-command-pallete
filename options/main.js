@@ -156,7 +156,7 @@ function validateSiteInfo(json) {
         if (!item.url) throw new Error(`Item ${index}: Missing 'url'`);
         if (!Array.isArray(item.commands)) throw new Error(`Item ${index}: 'commands' must be an array`);
         item.commands.forEach((cmd, cmdIndex) => {
-            if (!cmd.xpath) throw new Error(`Item ${index}, Command ${cmdIndex}: Missing 'xpath'`);
+            if (!cmd.xpath && !cmd.selector) throw new Error(`Item ${index}, Command ${cmdIndex}: Missing 'xpath' or 'selector'`);
         });
     });
     return true;

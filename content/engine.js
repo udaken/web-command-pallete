@@ -27,7 +27,13 @@
             
             matchedConfigs.forEach(config => {
                 config.commands.forEach(cmdDef => {
-                    const elements = this.getElementsByXPath(cmdDef.xpath);
+                    let elements = [];
+                    if (cmdDef.xpath) {
+                        elements = this.getElementsByXPath(cmdDef.xpath);
+                    } else if (cmdDef.selector) {
+                        elements = this.getElementsBySelector(cmdDef.selector);
+                    }
+
                     elements.forEach((el, index) => {
                         let label = cmdDef.title;
                         
@@ -69,6 +75,15 @@
                 console.error('XPath Error:', xpath, e);
             }
             return results;
+        }
+
+        getElementsBySelector(selector) {
+            try {
+                return Array.from(document.querySelectorAll(selector));
+            } catch (e) {
+                console.error('Selector Error:', selector, e);
+                return [];
+            }
         }
     }
 

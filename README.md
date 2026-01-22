@@ -71,6 +71,7 @@ Here is a rule for **Google Search**:
 | `name` | String | (Optional) A friendly name for the site rule. |
 | `url` | String | **Required.** A Regular Expression to match the page URL. |
 | `commands` | Array | List of command objects. |
-| `commands[].xpath` | String | **Required.** XPath expression to find the element. |
+| `commands[].xpath` | String | **Required (or selector).** XPath expression to find the element. |
+| `commands[].selector` | String | **Required (or xpath).** CSS Selector to find the element. |
 | `commands[].action` | String | `click` or `focus` (default). Note: `click` only works on sites in the "Allowed Click URLs" list. |
 | `commands[].title` | String | Label in the palette. Auto-detected from element text/placeholder if omitted. |
