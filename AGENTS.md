@@ -11,7 +11,7 @@ It works with Chrome and Firefox.
   - Styles are isolated using **Shadow DOM**.
 - **Flexible Configuration:**
   - **Multiple SITEINFO Sources:** Supports merging definitions from local JSON and multiple external URLs.
-  - **Configurable Shortcut:** Users can change the activation key (default: `Ctrl+Shift+P`).
+  - **Configurable Shortcut:** Users can change the activation key (default: `Ctrl+Alt+P`).
   - **Excluded URLs:** Support for regex-based URL exclusion.
 - **Debug Menu:** 
   - Built-in command `Debug: Toggle Info` to display runtime information (URL, matched SITEINFO, settings).
@@ -28,7 +28,7 @@ It works with Chrome and Firefox.
       - `xpath`: XPath expression to find the target element.
       - `action`: Operation to perform (`click` or `focus`. Defaults to `click`).
 - **Activation:** 
-  - Pressing the configured shortcut (default `Ctrl+Shift+P`) displays the palette.
+  - Pressing the configured shortcut (default `Ctrl+Alt+P`) displays the palette.
   - The palette filters commands based on the current URL.
   - Includes a built-in command to open the Options page.
 - **Execution:** 

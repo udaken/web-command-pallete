@@ -8,7 +8,7 @@
 
     // Config State
     let config = {
-        shortcut: { key: 'p', ctrlKey: true, shiftKey: true, altKey: false, metaKey: false, code: 'KeyP' },
+        shortcut: { key: 'p', ctrlKey: true, shiftKey: false, altKey: true, metaKey: false, code: 'KeyP' },
         excludedUrls: '',
         allowedClickUrls: ''
     };

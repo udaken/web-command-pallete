@@ -15,8 +15,8 @@ const statusSpan = document.getElementById('status');
 const DEFAULT_SHORTCUT = {
     key: 'p',
     ctrlKey: true,
-    shiftKey: true,
-    altKey: false,
+    shiftKey: false,
+    altKey: true,
     metaKey: false,
     code: 'KeyP'
 };
