@@ -104,7 +104,8 @@
         }
 
         if (action === 'copy-template') {
-            const escapedUrl = `^${window.location.origin}${window.location.pathname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`;
+            const fullUrl = window.location.origin + window.location.pathname;
+            const escapedUrl = `^${fullUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`;
             const template = [{
                 name: document.title || "New Site",
                 url: escapedUrl,
