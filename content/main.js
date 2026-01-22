@@ -103,6 +103,26 @@
             return;
         }
 
+        if (action === 'copy-template') {
+            const escapedUrl = `^${window.location.origin}${window.location.pathname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`;
+            const template = [{
+                name: document.title || "New Site",
+                url: escapedUrl,
+                commands: []
+            }];
+            const json = JSON.stringify(template, null, 4);
+            navigator.clipboard.writeText(json).then(() => {
+                palette.setDebugInfo(`Copied SITEINFO template to clipboard!\n\n${json}`);
+                if (!palette.isDebugVisible) {
+                    palette.toggleDebug();
+                }
+                palette.open();
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+            return;
+        }
+
         if (cmd.element) {
             // Ensure element is visible
             if (typeof cmd.element.scrollIntoView === 'function') {
@@ -166,6 +186,13 @@
                     id: 'builtin-debug',
                     label: 'Debug: Toggle Info',
                     action: 'debug',
+                    element: null
+                });
+
+                commands.push({
+                    id: 'builtin-copy-template',
+                    label: 'Debug: Copy SITEINFO Template',
+                    action: 'copy-template',
                     element: null
                 });
                 
