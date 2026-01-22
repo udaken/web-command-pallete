@@ -111,10 +111,25 @@
 
             // Visual highlight
             const originalOutline = cmd.element.style.outline;
-            cmd.element.style.outline = '3px solid #007bff';
+            const originalBoxShadow = cmd.element.style.boxShadow;
+            const originalTransition = cmd.element.style.transition;
+
+            // Instant highlight
+            cmd.element.style.transition = 'none';
+            cmd.element.style.outline = '4px solid #ff00ff';
+            cmd.element.style.boxShadow = '0 0 15px 5px rgba(255, 0, 255, 0.5)';
+            
+            // Fade back after 1 second
             setTimeout(() => {
+                cmd.element.style.transition = 'outline 1s ease, box-shadow 1s ease';
                 cmd.element.style.outline = originalOutline;
-            }, 2000);
+                cmd.element.style.boxShadow = originalBoxShadow;
+                
+                // Cleanup transition property after fade finishes
+                setTimeout(() => {
+                    cmd.element.style.transition = originalTransition;
+                }, 1000);
+            }, 1000);
 
             if (action === 'focus') {
                 cmd.element.focus();
