@@ -104,6 +104,18 @@
         }
 
         if (cmd.element) {
+            // Ensure element is visible
+            if (typeof cmd.element.scrollIntoView === 'function') {
+                cmd.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Visual highlight
+            const originalOutline = cmd.element.style.outline;
+            cmd.element.style.outline = '3px solid #007bff';
+            setTimeout(() => {
+                cmd.element.style.outline = originalOutline;
+            }, 2000);
+
             if (action === 'focus') {
                 cmd.element.focus();
             } else {
