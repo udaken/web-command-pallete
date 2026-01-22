@@ -113,7 +113,7 @@
             }];
             const json = JSON.stringify(template, null, 4);
             navigator.clipboard.writeText(json).then(() => {
-                palette.setDebugInfo(`Copied SITEINFO template to clipboard!\n\n${json}`);
+                palette.setDebugInfo(`Copied SITEINFO template to clipboard!\n\n${palette.escapeHtml(json)}`);
                 if (!palette.isDebugVisible) {
                     palette.toggleDebug();
                 }
@@ -202,11 +202,11 @@
                     try { return new RegExp(info.url).test(window.location.href); } catch(e) { return false; }
                 });
                 const debugInfo = [
-                    `URL: ${window.location.href}`,
-                    `Matched SITEINFO: ${matchedConfigs.map(c => c.name || c.url).join(', ') || 'None'}`,
+                    `URL: ${palette.escapeHtml(window.location.href)}`,
+                    `Matched SITEINFO: ${palette.escapeHtml(matchedConfigs.map(c => c.name || c.url).join(', ') || 'None')}`,
                     `Total SITEINFO loaded: ${engine.siteInfo.length}`,
                     `Click Allowed: ${isClickAllowed()}`,
-                    `Shortcut: ${config.shortcut ? JSON.stringify(config.shortcut) : 'Default'}`
+                    `Shortcut: ${palette.escapeHtml(config.shortcut ? JSON.stringify(config.shortcut) : 'Default')}`
                 ].join('<br>');
                 palette.setDebugInfo(debugInfo);
                 
