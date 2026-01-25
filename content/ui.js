@@ -67,9 +67,33 @@
         align-items: center;
     }
 
+    .item-content {
+        display: flex;
+        align-items: baseline;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .label {
+        color: #eee;
+    }
+
+    .description {
+        font-size: 0.85em;
+        color: #888;
+        margin-left: 12px;
+        flex-shrink: 0;
+    }
+
     .item.active, .item:hover {
         background: #007bff;
         color: #fff;
+    }
+    
+    .item.active .description, .item:hover .description {
+        color: #ddd;
     }
 
     .no-results {
@@ -188,7 +212,8 @@
             } else {
                 const lowerQuery = query.toLowerCase();
                 this.filteredCommands = this.commands.filter(cmd => 
-                    cmd.label.toLowerCase().includes(lowerQuery)
+                    cmd.label.toLowerCase().includes(lowerQuery) || 
+                    (cmd.description && cmd.description.toLowerCase().includes(lowerQuery))
                 );
             }
             this.selectedIndex = 0;
@@ -244,7 +269,10 @@
 
             this.resultsContainer.innerHTML = this.filteredCommands.map((cmd, index) => `
                 <li class="item ${index === this.selectedIndex ? 'active' : ''}" data-index="${index}">
-                    <span class="label">${this.escapeHtml(cmd.label)}</span>
+                    <div class="item-content">
+                        <span class="label">${this.escapeHtml(cmd.label)}</span>
+                        ${cmd.description ? `<span class="description">${this.escapeHtml(cmd.description)}</span>` : ''}
+                    </div>
                 </li>
             `).join('');
 

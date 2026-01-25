@@ -35,16 +35,24 @@
                     }
 
                     elements.forEach((el, index) => {
-                        let label = cmdDef.title;
-                        
-                        // Default title from element if not specified
-                        if (!label && el) {
-                            label = el.innerText || el.textContent;
-                            
-                            // Enhanced fallback for inputs, images, etc.
-                            if (!label || !label.trim()) {
-                                label = el.value || el.placeholder || el.getAttribute('aria-label') || el.title || el.alt || "Command";
+                        let domText = "";
+                        if (el) {
+                            domText = el.innerText || el.textContent;
+                            if (!domText || !domText.trim()) {
+                                domText = el.value || el.placeholder || el.getAttribute('aria-label') || el.title || el.alt;
                             }
+                        }
+                        domText = (domText || "").trim();
+
+                        const jsonTitle = (cmdDef.title || "").trim();
+                        
+                        // Primary label: DOM text > JSON Title > "Command"
+                        let label = domText || jsonTitle || "Command";
+
+                        // Description: JSON Title (only if it exists and is different from the label)
+                        let description = "";
+                        if (jsonTitle && jsonTitle !== label) {
+                            description = jsonTitle;
                         }
 
                         // Use name if available, otherwise use url pattern for ID generation
@@ -52,7 +60,8 @@
 
                         commands.push({
                             id: `${prefix}-${index}-${Math.random().toString(36).substr(2, 9)}`,
-                            label: (label || "").trim().substring(0, 100),
+                            label: label.substring(0, 100),
+                            description: description,
                             element: el,
                             action: cmdDef.action || 'click',
                             xpath: cmdDef.xpath
