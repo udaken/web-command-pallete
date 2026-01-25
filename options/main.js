@@ -21,6 +21,48 @@ const DEFAULT_SHORTCUT = {
     code: 'KeyP'
 };
 
+const SITEINFO_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "array",
+    "description": "List of Site Definitions",
+    "items": {
+        "type": "object",
+        "required": ["url", "commands"],
+        "properties": {
+            "url": {
+                "type": "string",
+                "description": "Regex pattern to match the page URL"
+            },
+            "name": {
+                "type": "string",
+                "description": "Display name for the site"
+            },
+            "commands": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": { "type": "string" },
+                        "selector": { "type": "string", "description": "CSS Selector" },
+                        "xpath": { "type": "string", "description": "XPath Expression" },
+                        "action": { 
+                            "type": "string", 
+                            "enum": ["click", "focus", "copy-text"],
+                            "default": "click" 
+                        }
+                    },
+                    "anyOf": [
+                        { "required": ["selector"] },
+                        { "required": ["xpath"] }
+                    ]
+                }
+            }
+        }
+    }
+};
+
+document.getElementById('json-schema-display').textContent = JSON.stringify(SITEINFO_SCHEMA, null, 2);
+
 let currentShortcut = { ...DEFAULT_SHORTCUT };
 
 // Helper: Show Status

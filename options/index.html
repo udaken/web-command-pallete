@@ -37,11 +37,14 @@
                 <button id="update-all">Update & Save All</button>
             </div>
     
-                    <div class="section">
-                        <h2>Custom SITEINFO (Local JSON)</h2>
-                        <p>Directly edit the SITEINFO definitions.</p>
-                        <div class="setting-group">
-                            <button id="import-json">Import from File</button>
+                                <div class="section">
+                                    <h2>Custom SITEINFO (Local JSON)</h2>
+                                    <p>Directly edit the SITEINFO definitions.</p>
+                                    <details style="margin-bottom: 15px;">
+                                        <summary style="cursor: pointer; color: #007bff; user-select: none;">Show JSON Schema Reference</summary>
+                                        <pre id="json-schema-display" style="background: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 0.85em; margin-top: 5px; border: 1px solid #ddd;"></pre>
+                                    </details>
+                                    <div class="setting-group">                            <button id="import-json">Import from File</button>
                             <button id="export-json">Export to File</button>
                             <input type="file" id="import-file" style="display: none;" accept=".json">
                         </div>
