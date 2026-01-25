@@ -205,7 +205,7 @@ function validateSiteInfo(json) {
 }
 
 // Save & Update Handler
-updateAllButton.addEventListener('click', async () => {
+const performUpdateAndSave = async () => {
     statusSpan.textContent = 'Updating...';
     statusSpan.className = '';
 
@@ -266,6 +266,16 @@ updateAllButton.addEventListener('click', async () => {
 
     } catch (e) {
         showStatus(e.message, 'error');
+    }
+};
+
+updateAllButton.addEventListener('click', performUpdateAndSave);
+
+// Global Shortcut for Saving (Ctrl+S / Cmd+S)
+document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        performUpdateAndSave();
     }
 });
 
