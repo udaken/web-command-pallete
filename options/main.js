@@ -6,6 +6,7 @@ const allowedClickUrlsInput = document.getElementById('allowed-click-urls');
 const siteInfoUrlsInput = document.getElementById('siteinfo-urls');
 const siteInfoJsonInput = document.getElementById('siteinfo-json');
 const updateAllButton = document.getElementById('update-all');
+const formatJsonButton = document.getElementById('format-json');
 const exportJsonButton = document.getElementById('export-json');
 const importJsonButton = document.getElementById('import-json');
 const importFileInput = document.getElementById('import-file');
@@ -140,6 +141,20 @@ async function loadSettings() {
     // 4. Local JSON
     siteInfoJsonInput.value = config.localJson || '[]';
 }
+
+// Format JSON
+formatJsonButton.addEventListener('click', () => {
+    try {
+        const jsonStr = siteInfoJsonInput.value.trim();
+        if (!jsonStr) return;
+        
+        const json = JSON.parse(jsonStr);
+        siteInfoJsonInput.value = JSON.stringify(json, null, 4);
+        showStatus('JSON formatted!');
+    } catch (e) {
+        showStatus('Invalid JSON. Cannot format.', 'error');
+    }
+});
 
 // Export JSON
 exportJsonButton.addEventListener('click', () => {
