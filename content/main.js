@@ -10,7 +10,8 @@
     let config = {
         shortcut: { key: 'p', ctrlKey: true, shiftKey: false, altKey: true, metaKey: false, code: 'KeyP' },
         excludedUrls: '',
-        allowedClickUrls: ''
+        allowedClickUrls: '',
+        trustedSitePatterns: []
     };
 
     async function loadConfig() {
@@ -19,6 +20,7 @@
             if (data.config.shortcut) config.shortcut = data.config.shortcut;
             if (data.config.excludedUrls) config.excludedUrls = data.config.excludedUrls;
             if (data.config.allowedClickUrls) config.allowedClickUrls = data.config.allowedClickUrls;
+            if (data.config.trustedSitePatterns) config.trustedSitePatterns = data.config.trustedSitePatterns;
         }
     }
 
@@ -86,8 +88,14 @@
 
         let action = cmd.action || 'click'; // Default action
 
+        // Check for trusted SITEINFO
+        let isTrusted = false;
+        if (cmd.definitionId && config.trustedSitePatterns && config.trustedSitePatterns.includes(cmd.definitionId)) {
+            isTrusted = true;
+        }
+
         // Security: Demote click to focus if not allowed
-        if (action === 'click' && !isClickAllowed()) {
+        if (action === 'click' && !isClickAllowed() && !isTrusted) {
             console.warn("Web Command Palette: 'click' action demoted to 'focus' for security. Configure 'Allowed Click URLs' in options to enable.");
             action = 'focus';
         }

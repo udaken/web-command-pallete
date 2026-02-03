@@ -10,6 +10,45 @@ const exportJsonButton = document.getElementById('export-json');
 const importJsonButton = document.getElementById('import-json');
 const importFileInput = document.getElementById('import-file');
 const statusSpan = document.getElementById('status');
+const trustedListContainer = document.getElementById('trusted-siteinfo-list');
+
+// Render Trusted SITEINFO List
+function renderTrustedList(siteInfos, trustedPatterns) {
+    trustedListContainer.innerHTML = '';
+    if (!siteInfos || siteInfos.length === 0) {
+        trustedListContainer.innerHTML = '<div style="color: #666; font-style: italic;">No SITEINFO loaded yet.</div>';
+        return;
+    }
+
+    const uniqueMap = new Map();
+    siteInfos.forEach(info => {
+        if (!uniqueMap.has(info.url)) {
+            uniqueMap.set(info.url, info);
+        }
+    });
+
+    uniqueMap.forEach((info, url) => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '5px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = url;
+        checkbox.checked = trustedPatterns.includes(url);
+        checkbox.style.marginRight = '8px';
+        
+        const label = document.createElement('label');
+        label.style.fontSize = '0.9em';
+        label.style.wordBreak = 'break-all';
+        label.textContent = info.name ? `${info.name} (${url})` : url;
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        trustedListContainer.appendChild(div);
+    });
+}
 
 // Default Shortcut
 const DEFAULT_SHORTCUT = {
@@ -119,8 +158,9 @@ resetShortcutButton.addEventListener('click', () => {
 
 // Load Settings
 async function loadSettings() {
-    const data = await chrome.storage.local.get(['config']);
+    const data = await chrome.storage.local.get(['config', 'siteinfo']);
     const config = data.config || {};
+    const siteInfo = data.siteinfo || [];
 
     // 1. Shortcut
     if (config.shortcut) {
@@ -139,6 +179,9 @@ async function loadSettings() {
 
     // 4. Local JSON
     siteInfoJsonInput.value = config.localJson || '[]';
+    
+    // 5. Trusted List
+    renderTrustedList(siteInfo, config.trustedSitePatterns || []);
 }
 
 // Export JSON
@@ -210,6 +253,15 @@ const performUpdateAndSave = async () => {
     statusSpan.className = '';
 
     try {
+        // Collect Trusted Patterns from UI
+        const trustedPatterns = [];
+        const checkboxes = trustedListContainer.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                trustedPatterns.push(cb.value);
+            }
+        });
+
         // 1. Parse & Format Local JSON
         let localData = [];
         try {
@@ -255,6 +307,7 @@ const performUpdateAndSave = async () => {
             shortcut: currentShortcut,
             excludedUrls: excludedUrlsInput.value,
             allowedClickUrls: allowedClickUrlsInput.value,
+            trustedSitePatterns: trustedPatterns,
             urls: urls,
             localJson: siteInfoJsonInput.value
         };
@@ -265,6 +318,9 @@ const performUpdateAndSave = async () => {
         });
 
         showStatus(`Saved! Loaded ${mergedSiteInfo.length} definitions.`);
+        
+        // Re-render list with new data
+        renderTrustedList(mergedSiteInfo, trustedPatterns);
 
     } catch (e) {
         showStatus(e.message, 'error');

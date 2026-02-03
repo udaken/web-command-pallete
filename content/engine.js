@@ -64,7 +64,8 @@
                             description: description,
                             element: el,
                             action: cmdDef.action || 'click',
-                            xpath: cmdDef.xpath
+                            xpath: cmdDef.xpath,
+                            definitionId: config.url // Track which SITEINFO definition this command belongs to
                         });
                     });
                 });
