@@ -11,6 +11,42 @@ const importJsonButton = document.getElementById('import-json');
 const importFileInput = document.getElementById('import-file');
 const statusSpan = document.getElementById('status');
 const trustedListContainer = document.getElementById('trusted-siteinfo-list');
+const trustedSourcesContainer = document.getElementById('trusted-sources-list');
+
+// Render Trusted Sources List
+function renderTrustedSources(sources, trustedSources) {
+    trustedSourcesContainer.innerHTML = '';
+    if (!sources || sources.length === 0) {
+        trustedSourcesContainer.innerHTML = '<div style="color: #666; font-style: italic;">No Sources loaded yet.</div>';
+        return;
+    }
+
+    // Always include 'local' if not present, but usually sources come from config
+    const uniqueSources = new Set(sources);
+    if (!uniqueSources.has('local')) uniqueSources.add('local');
+
+    uniqueSources.forEach(source => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '5px';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = source;
+        checkbox.checked = trustedSources.includes(source);
+        checkbox.style.marginRight = '8px';
+        
+        const label = document.createElement('label');
+        label.style.fontSize = '0.9em';
+        label.style.wordBreak = 'break-all';
+        label.textContent = source === 'local' ? 'Local JSON (Custom SITEINFO)' : source;
+
+        div.appendChild(checkbox);
+        div.appendChild(label);
+        trustedSourcesContainer.appendChild(div);
+    });
+}
 
 // Render Trusted SITEINFO List
 function renderTrustedList(siteInfos, trustedPatterns) {
@@ -182,6 +218,10 @@ async function loadSettings() {
     
     // 5. Trusted List
     renderTrustedList(siteInfo, config.trustedSitePatterns || []);
+    
+    // 6. Trusted Sources
+    const sources = ['local', ...(config.urls || [])];
+    renderTrustedSources(sources, config.trustedSources || []);
 }
 
 // Export JSON
@@ -262,6 +302,15 @@ const performUpdateAndSave = async () => {
             }
         });
 
+        // Collect Trusted Sources from UI
+        const trustedSources = [];
+        const sourceCheckboxes = trustedSourcesContainer.querySelectorAll('input[type="checkbox"]');
+        sourceCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                trustedSources.push(cb.value);
+            }
+        });
+
         // 1. Parse & Format Local JSON
         let localData = [];
         try {
@@ -271,6 +320,9 @@ const performUpdateAndSave = async () => {
                 validateSiteInfo(localData);
                 // Auto-format on save
                 siteInfoJsonInput.value = JSON.stringify(localData, null, 4);
+                
+                // Inject Source URL
+                localData.forEach(item => item.sourceUrl = 'local');
             }
         } catch (e) {
             throw new Error(`Local JSON Error: ${e.message}`);
@@ -291,6 +343,8 @@ const performUpdateAndSave = async () => {
                 const json = await res.json();
                 validateSiteInfo(json);
                 if (Array.isArray(json)) {
+                    // Inject Source URL
+                    json.forEach(item => item.sourceUrl = url);
                     externalData = externalData.concat(json);
                 }
             } catch (e) {
@@ -308,6 +362,7 @@ const performUpdateAndSave = async () => {
             excludedUrls: excludedUrlsInput.value,
             allowedClickUrls: allowedClickUrlsInput.value,
             trustedSitePatterns: trustedPatterns,
+            trustedSources: trustedSources,
             urls: urls,
             localJson: siteInfoJsonInput.value
         };
@@ -321,6 +376,7 @@ const performUpdateAndSave = async () => {
         
         // Re-render list with new data
         renderTrustedList(mergedSiteInfo, trustedPatterns);
+        renderTrustedSources(['local', ...urls], trustedSources);
 
     } catch (e) {
         showStatus(e.message, 'error');

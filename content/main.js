@@ -11,7 +11,8 @@
         shortcut: { key: 'p', ctrlKey: true, shiftKey: false, altKey: true, metaKey: false, code: 'KeyP' },
         excludedUrls: '',
         allowedClickUrls: '',
-        trustedSitePatterns: []
+        trustedSitePatterns: [],
+        trustedSources: []
     };
 
     async function loadConfig() {
@@ -21,6 +22,7 @@
             if (data.config.excludedUrls) config.excludedUrls = data.config.excludedUrls;
             if (data.config.allowedClickUrls) config.allowedClickUrls = data.config.allowedClickUrls;
             if (data.config.trustedSitePatterns) config.trustedSitePatterns = data.config.trustedSitePatterns;
+            if (data.config.trustedSources) config.trustedSources = data.config.trustedSources;
         }
     }
 
@@ -88,9 +90,12 @@
 
         let action = cmd.action || 'click'; // Default action
 
-        // Check for trusted SITEINFO
+        // Check for trusted SITEINFO or Trusted Source
         let isTrusted = false;
         if (cmd.definitionId && config.trustedSitePatterns && config.trustedSitePatterns.includes(cmd.definitionId)) {
+            isTrusted = true;
+        }
+        if (cmd.sourceUrl && config.trustedSources && config.trustedSources.includes(cmd.sourceUrl)) {
             isTrusted = true;
         }
 

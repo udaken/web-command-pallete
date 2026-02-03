@@ -65,7 +65,8 @@
                             element: el,
                             action: cmdDef.action || 'click',
                             xpath: cmdDef.xpath,
-                            definitionId: config.url // Track which SITEINFO definition this command belongs to
+                            definitionId: config.url, // Track which SITEINFO definition this command belongs to
+                            sourceUrl: config.sourceUrl // Track the source (URL or 'local')
                         });
                     });
                 });
