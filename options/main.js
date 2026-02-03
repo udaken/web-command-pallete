@@ -9,6 +9,9 @@ const updateAllButton = document.getElementById('update-all');
 const exportJsonButton = document.getElementById('export-json');
 const importJsonButton = document.getElementById('import-json');
 const importFileInput = document.getElementById('import-file');
+const exportSettingsButton = document.getElementById('export-settings');
+const importSettingsButton = document.getElementById('import-settings');
+const importSettingsFileInput = document.getElementById('import-settings-file');
 const statusSpan = document.getElementById('status');
 const trustedSourcesContainer = document.getElementById('trusted-sources-list');
 
@@ -236,6 +239,57 @@ importFileInput.addEventListener('change', (e) => {
         }
         // Reset input so the same file can be imported again if needed
         importFileInput.value = '';
+    };
+    reader.readAsText(file);
+});
+
+// Export Settings
+exportSettingsButton.addEventListener('click', async () => {
+    try {
+        const data = await chrome.storage.local.get(['config']);
+        const config = data.config || {};
+        
+        const blob = new Blob([JSON.stringify(config, null, 4)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'web-command-palette-settings.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        showStatus('Settings Exported!');
+    } catch (e) {
+        showStatus(`Export Error: ${e.message}`, 'error');
+    }
+});
+
+// Import Settings
+importSettingsButton.addEventListener('click', () => {
+    importSettingsFileInput.click();
+});
+
+importSettingsFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        try {
+            const content = event.target.result;
+            const config = JSON.parse(content);
+            
+            // Basic validation
+            if (typeof config !== 'object') throw new Error("Invalid config format");
+            
+            await chrome.storage.local.set({ config: config });
+            
+            // Reload UI
+            await loadSettings();
+            
+            showStatus('Settings Imported! Please click "Update & Save All" to refresh external data.', 'success');
+        } catch (err) {
+            showStatus(`Import Error: ${err.message}`, 'error');
+        }
+        importSettingsFileInput.value = '';
     };
     reader.readAsText(file);
 });
