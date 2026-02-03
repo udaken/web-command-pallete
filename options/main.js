@@ -30,19 +30,29 @@ function renderTrustedSources(sources, trustedSources) {
         div.style.display = 'flex';
         div.style.alignItems = 'center';
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = source;
-        checkbox.checked = trustedSources.includes(source);
-        checkbox.style.marginRight = '8px';
-        
-        const label = document.createElement('label');
-        label.style.fontSize = '0.9em';
-        label.style.wordBreak = 'break-all';
-        label.textContent = source === 'local' ? 'Local JSON (Custom SITEINFO)' : source;
+        if (source === 'local') {
+            // Local is always trusted
+            const label = document.createElement('label');
+            label.style.fontSize = '0.9em';
+            label.style.color = '#28a745';
+            label.style.fontWeight = 'bold';
+            label.textContent = '✅ Local JSON (Custom SITEINFO) - Always Trusted';
+            div.appendChild(label);
+        } else {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = source;
+            checkbox.checked = trustedSources.includes(source);
+            checkbox.style.marginRight = '8px';
+            
+            const label = document.createElement('label');
+            label.style.fontSize = '0.9em';
+            label.style.wordBreak = 'break-all';
+            label.textContent = source;
 
-        div.appendChild(checkbox);
-        div.appendChild(label);
+            div.appendChild(checkbox);
+            div.appendChild(label);
+        }
         trustedSourcesContainer.appendChild(div);
     });
 }

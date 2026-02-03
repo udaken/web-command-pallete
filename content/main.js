@@ -90,7 +90,9 @@
 
         // Check for Trusted Source
         let isTrusted = false;
-        if (cmd.sourceUrl && config.trustedSources && config.trustedSources.includes(cmd.sourceUrl)) {
+        if (cmd.sourceUrl === 'local') {
+            isTrusted = true;
+        } else if (cmd.sourceUrl && config.trustedSources && config.trustedSources.includes(cmd.sourceUrl)) {
             isTrusted = true;
         }
 
