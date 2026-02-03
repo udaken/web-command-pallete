@@ -13,6 +13,7 @@ const exportSettingsButton = document.getElementById('export-settings');
 const importSettingsButton = document.getElementById('import-settings');
 const importSettingsFileInput = document.getElementById('import-settings-file');
 const statusSpan = document.getElementById('status');
+const lastUpdatedSpan = document.getElementById('last-updated');
 const trustedSourcesContainer = document.getElementById('trusted-sources-list');
 
 // Render Trusted Sources List
@@ -168,9 +169,10 @@ resetShortcutButton.addEventListener('click', () => {
 
 // Load Settings
 async function loadSettings() {
-    const data = await chrome.storage.local.get(['config', 'siteinfo']);
+    const data = await chrome.storage.local.get(['config', 'siteinfo', 'lastUpdated']);
     const config = data.config || {};
     const siteInfo = data.siteinfo || [];
+    const lastUpdated = data.lastUpdated;
 
     // 1. Shortcut
     if (config.shortcut) {
@@ -193,6 +195,11 @@ async function loadSettings() {
     // 5. Trusted Sources
     const sources = ['local', ...(config.urls || [])];
     renderTrustedSources(sources, config.trustedSources || []);
+
+    // 6. Last Updated
+    if (lastUpdated) {
+        lastUpdatedSpan.textContent = `Last Updated: ${new Date(lastUpdated).toLocaleString()}`;
+    }
 }
 
 // Export JSON
@@ -379,12 +386,15 @@ const performUpdateAndSave = async () => {
             localJson: siteInfoJsonInput.value
         };
 
+        const now = Date.now();
         await chrome.storage.local.set({
             config: config,
-            siteinfo: mergedSiteInfo // Content script reads this
+            siteinfo: mergedSiteInfo, // Content script reads this
+            lastUpdated: now
         });
 
         showStatus(`Saved! Loaded ${mergedSiteInfo.length} definitions.`);
+        lastUpdatedSpan.textContent = `Last Updated: ${new Date(now).toLocaleString()}`;
         
         // Re-render list with new data
         renderTrustedSources(['local', ...urls], trustedSources);
