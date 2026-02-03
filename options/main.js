@@ -10,7 +10,6 @@ const exportJsonButton = document.getElementById('export-json');
 const importJsonButton = document.getElementById('import-json');
 const importFileInput = document.getElementById('import-file');
 const statusSpan = document.getElementById('status');
-const trustedListContainer = document.getElementById('trusted-siteinfo-list');
 const trustedSourcesContainer = document.getElementById('trusted-sources-list');
 
 // Render Trusted Sources List
@@ -45,44 +44,6 @@ function renderTrustedSources(sources, trustedSources) {
         div.appendChild(checkbox);
         div.appendChild(label);
         trustedSourcesContainer.appendChild(div);
-    });
-}
-
-// Render Trusted SITEINFO List
-function renderTrustedList(siteInfos, trustedPatterns) {
-    trustedListContainer.innerHTML = '';
-    if (!siteInfos || siteInfos.length === 0) {
-        trustedListContainer.innerHTML = '<div style="color: #666; font-style: italic;">No SITEINFO loaded yet.</div>';
-        return;
-    }
-
-    const uniqueMap = new Map();
-    siteInfos.forEach(info => {
-        if (!uniqueMap.has(info.url)) {
-            uniqueMap.set(info.url, info);
-        }
-    });
-
-    uniqueMap.forEach((info, url) => {
-        const div = document.createElement('div');
-        div.style.marginBottom = '5px';
-        div.style.display = 'flex';
-        div.style.alignItems = 'center';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = url;
-        checkbox.checked = trustedPatterns.includes(url);
-        checkbox.style.marginRight = '8px';
-        
-        const label = document.createElement('label');
-        label.style.fontSize = '0.9em';
-        label.style.wordBreak = 'break-all';
-        label.textContent = info.name ? `${info.name} (${url})` : url;
-
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        trustedListContainer.appendChild(div);
     });
 }
 
@@ -216,10 +177,7 @@ async function loadSettings() {
     // 4. Local JSON
     siteInfoJsonInput.value = config.localJson || '[]';
     
-    // 5. Trusted List
-    renderTrustedList(siteInfo, config.trustedSitePatterns || []);
-    
-    // 6. Trusted Sources
+    // 5. Trusted Sources
     const sources = ['local', ...(config.urls || [])];
     renderTrustedSources(sources, config.trustedSources || []);
 }
@@ -293,15 +251,6 @@ const performUpdateAndSave = async () => {
     statusSpan.className = '';
 
     try {
-        // Collect Trusted Patterns from UI
-        const trustedPatterns = [];
-        const checkboxes = trustedListContainer.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(cb => {
-            if (cb.checked) {
-                trustedPatterns.push(cb.value);
-            }
-        });
-
         // Collect Trusted Sources from UI
         const trustedSources = [];
         const sourceCheckboxes = trustedSourcesContainer.querySelectorAll('input[type="checkbox"]');
@@ -361,7 +310,6 @@ const performUpdateAndSave = async () => {
             shortcut: currentShortcut,
             excludedUrls: excludedUrlsInput.value,
             allowedClickUrls: allowedClickUrlsInput.value,
-            trustedSitePatterns: trustedPatterns,
             trustedSources: trustedSources,
             urls: urls,
             localJson: siteInfoJsonInput.value
@@ -375,7 +323,6 @@ const performUpdateAndSave = async () => {
         showStatus(`Saved! Loaded ${mergedSiteInfo.length} definitions.`);
         
         // Re-render list with new data
-        renderTrustedList(mergedSiteInfo, trustedPatterns);
         renderTrustedSources(['local', ...urls], trustedSources);
 
     } catch (e) {
