@@ -30,6 +30,16 @@ Web Command Palette is a lightweight browser extension that brings a VS Code-sty
 2.  **Search:** Type to filter available commands.
 3.  **Execute:** Press `Enter` to run the selected command.
 
+## 🛠️ Development
+
+### Packaging
+To create a zip file for distribution:
+```bash
+npm install
+npm run package
+```
+This will generate `web-command-palette.zip` in the root directory.
+
 ### Creating New Rules
 The easiest way to create a rule for a new site is:
 1.  Open the palette on the target site.
