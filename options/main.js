@@ -5,7 +5,7 @@ const excludedUrlsInput = document.getElementById('excluded-urls');
 const allowedClickUrlsInput = document.getElementById('allowed-click-urls');
 const navHighlightCssInput = document.getElementById('nav-highlight-css');
 const resetNavHighlightButton = document.getElementById('reset-nav-highlight');
-const navOpenInNewWindowInput = document.getElementById('nav-open-in-new-window');
+const navOpenInNewTabInput = document.getElementById('nav-open-in-new-tab');
 const siteInfoUrlsInput = document.getElementById('siteinfo-urls');
 const siteInfoJsonInput = document.getElementById('siteinfo-json');
 const updateAllButton = document.getElementById('update-all');
@@ -229,8 +229,8 @@ async function loadSettings() {
     // 2.6 Nav Highlight CSS
     navHighlightCssInput.value = typeof config.navHighlightCss === 'string' ? config.navHighlightCss : DEFAULT_NAV_HIGHLIGHT_CSS;
 
-    // 2.7 Nav open in new window
-    navOpenInNewWindowInput.checked = !!config.navOpenInNewWindow;
+    // 2.7 Nav open in new tab
+    navOpenInNewTabInput.checked = !!config.navOpenInNewTab;
 
     // 3. URLs
     siteInfoUrlsInput.value = (config.urls || []).join('\n');
@@ -439,7 +439,7 @@ const performUpdateAndSave = async () => {
             excludedUrls: excludedUrlsInput.value,
             allowedClickUrls: allowedClickUrlsInput.value,
             navHighlightCss: navHighlightCssInput.value,
-            navOpenInNewWindow: navOpenInNewWindowInput.checked,
+            navOpenInNewTab: navOpenInNewTabInput.checked,
             trustedSources: trustedSources,
             urls: urls,
             localJson: siteInfoJsonInput.value

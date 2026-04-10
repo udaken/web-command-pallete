@@ -15,7 +15,7 @@
         allowedClickUrls: '',
         trustedSources: [],
         navHighlightCss: DEFAULT_NAV_HIGHLIGHT_CSS,
-        navOpenInNewWindow: false
+        navOpenInNewTab: false
     };
 
     async function loadConfig() {
@@ -26,7 +26,7 @@
             if (data.config.allowedClickUrls) config.allowedClickUrls = data.config.allowedClickUrls;
             if (data.config.trustedSources) config.trustedSources = data.config.trustedSources;
             if (typeof data.config.navHighlightCss === 'string') config.navHighlightCss = data.config.navHighlightCss;
-            if (typeof data.config.navOpenInNewWindow === 'boolean') config.navOpenInNewWindow = data.config.navOpenInNewWindow;
+            if (typeof data.config.navOpenInNewTab === 'boolean') config.navOpenInNewTab = data.config.navOpenInNewTab;
         }
     }
 
@@ -107,7 +107,7 @@
         return false;
     }
 
-    function isNavOpenInWindow(e) {
+    function isNavOpenInNewTab(e) {
         if (e.ctrlKey || e.altKey || e.metaKey || !e.shiftKey) return false;
         if (e.key === 'Enter') return true;
         if (e.key === 'v' || e.key === 'V') return true;
@@ -139,7 +139,7 @@
         return activeEl.querySelector('a');
     }
 
-    function openActiveLink(inNewWindow = false) {
+    function openActiveLink(inNewTab = false) {
         const active = navState.activeEl;
         if (!active) return false;
         const nav = engine.getNavigationForCurrentPage();
@@ -151,12 +151,12 @@
         }
         const href = (link.tagName === 'A' && link.href) ? link.href : null;
 
-        if (inNewWindow) {
+        if (inNewTab) {
             if (!href) {
-                console.warn('Web Command Palette: cannot open in a new window without a valid href.');
+                console.warn('Web Command Palette: cannot open in a new tab without a valid href.');
                 return false;
             }
-            chrome.runtime.sendMessage({ type: 'open-window', url: href });
+            chrome.runtime.sendMessage({ type: 'open-tab', url: href });
             return true;
         }
 
@@ -430,11 +430,11 @@
                 }
                 return;
             }
-            if ((isNavOpen(e) || isNavOpenInWindow(e)) && navState.activeEl) {
+            if ((isNavOpen(e) || isNavOpenInNewTab(e)) && navState.activeEl) {
                 if (isExcluded()) return;
-                const shiftHeld = isNavOpenInWindow(e);
-                const inNewWindow = shiftHeld !== !!config.navOpenInNewWindow;
-                if (openActiveLink(inNewWindow)) {
+                const shiftHeld = isNavOpenInNewTab(e);
+                const inNewTab = shiftHeld !== !!config.navOpenInNewTab;
+                if (openActiveLink(inNewTab)) {
                     e.preventDefault();
                     e.stopPropagation();
                 }

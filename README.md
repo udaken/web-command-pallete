@@ -103,7 +103,7 @@ On pages matched by a SITEINFO rule that defines `navigation.items`, you can mov
 - **Open link (default):** `Enter` or `v`
 - **Open link (opposite of default):** `Shift+Enter` or `Shift+V`
 
-The default open target (current window vs. new window) is configurable from the Options page. Holding `Shift` inverts the default for that press.
+The default open target (current tab vs. new tab) is configurable from the Options page. Holding `Shift` inverts the default for that press.
 
 The active item is highlighted and scrolled into view. The next press moves the marker relative to the currently active element. The first press selects the item closest to the current viewport.
 

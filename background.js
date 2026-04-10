@@ -102,20 +102,20 @@ chrome.runtime.onStartup.addListener(() => {
 
 // Handle messages from content scripts
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message && message.type === 'open-window' && typeof message.url === 'string') {
+    if (message && message.type === 'open-tab' && typeof message.url === 'string') {
         try {
             const parsed = new URL(message.url);
             if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-                console.warn('Web Command Palette: refused to open non-http(s) URL in new window.');
+                console.warn('Web Command Palette: refused to open non-http(s) URL in new tab.');
                 sendResponse({ ok: false });
                 return false;
             }
         } catch (e) {
-            console.warn('Web Command Palette: invalid URL for new window.', e);
+            console.warn('Web Command Palette: invalid URL for new tab.', e);
             sendResponse({ ok: false });
             return false;
         }
-        chrome.windows.create({ url: message.url });
+        chrome.tabs.create({ url: message.url, active: true });
         sendResponse({ ok: true });
         return false;
     }
