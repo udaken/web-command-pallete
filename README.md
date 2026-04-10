@@ -92,3 +92,37 @@ You can define commands using a JSON structure called **SITEINFO**. You can edit
 | `commands[].selector` | String | **Required (or selector).** CSS Selector to find the element. |
 | `commands[].action` | String | `click` or `focus` (default). Note: `click` only works on sites in the "Allowed Click URLs" list. |
 | `commands[].title` | String | Label in the palette. Auto-detected from element text/placeholder if omitted. |
+| `navigation` | Object | (Optional) Item navigation configuration. |
+| `navigation.items` | Object | XPath or selector that matches the list of navigable items. |
+| `navigation.link` | Object | (Optional) XPath or selector (scoped to the active item) used to extract the link opened by Enter/v. Defaults to the first `<a>` inside the active item. |
+
+### 4. Item Navigation
+On pages matched by a SITEINFO rule that defines `navigation.items`, you can move an **active element** marker across the matched items with:
+- **Next:** `Ctrl+Right` or `j`
+- **Previous:** `Ctrl+Left` or `k`
+- **Open link (default):** `Enter` or `v`
+- **Open link (opposite of default):** `Shift+Enter` or `Shift+V`
+
+The default open target (current window vs. new window) is configurable from the Options page. Holding `Shift` inverts the default for that press.
+
+The active item is highlighted and scrolled into view. The next press moves the marker relative to the currently active element. The first press selects the item closest to the current viewport.
+
+Pressing **Enter** or **v** opens the link inside the active element. By default, the first `<a>` element inside the active item is used. You can override this with `navigation.link`, which is scoped to the active element (use `.//a` in XPath for a relative search).
+
+The highlight style is configurable from the Options page under **Active Item Highlight Style**. It accepts any set of CSS declarations separated by semicolons (e.g., `outline: 3px solid red; background-color: yellow;`). Defaults to a magenta outline with a glow.
+
+These shortcuts are ignored while typing in input fields, textareas, or contenteditable elements, and while the command palette is open.
+
+```json
+[
+    {
+        "name": "Example Feed",
+        "url": "^https://example\\.com/feed",
+        "commands": [],
+        "navigation": {
+            "items": { "selector": "article.post" },
+            "link": { "selector": "h2 a.title" }
+        }
+    }
+]
+```

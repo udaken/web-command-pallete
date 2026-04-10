@@ -75,6 +75,36 @@
             return commands;
         }
 
+        getNavigationForCurrentPage() {
+            const currentUrl = window.location.href;
+            const matchedConfigs = this.siteInfo.filter(info => {
+                try {
+                    return new RegExp(info.url).test(currentUrl);
+                } catch (e) {
+                    return false;
+                }
+            });
+
+            for (const config of matchedConfigs) {
+                if (!config.navigation || !config.navigation.items) continue;
+                const def = config.navigation.items;
+                let items = [];
+                if (def.xpath) {
+                    items = this.getElementsByXPath(def.xpath);
+                } else if (def.selector) {
+                    items = this.getElementsBySelector(def.selector);
+                }
+                if (items.length > 0) {
+                    return {
+                        items,
+                        link: config.navigation.link || null,
+                        sourceUrl: config.sourceUrl
+                    };
+                }
+            }
+            return null;
+        }
+
         getElementsByXPath(xpath) {
             const results = [];
             try {

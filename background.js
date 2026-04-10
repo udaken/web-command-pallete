@@ -99,3 +99,37 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onStartup.addListener(() => {
     setupAlarm();
 });
+
+// Handle messages from content scripts
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message && message.type === 'open-window' && typeof message.url === 'string') {
+        try {
+            const parsed = new URL(message.url);
+            if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+                console.warn('Web Command Palette: refused to open non-http(s) URL in new window.');
+                sendResponse({ ok: false });
+                return false;
+            }
+        } catch (e) {
+            console.warn('Web Command Palette: invalid URL for new window.', e);
+            sendResponse({ ok: false });
+            return false;
+        }
+        chrome.windows.create({ url: message.url });
+        sendResponse({ ok: true });
+        return false;
+    }
+    return false;
+});
+
+// Toolbar button click: toggle palette in the active tab
+chrome.action.onClicked.addListener(async (tab) => {
+    if (!tab || tab.id === undefined) return;
+    try {
+        await chrome.tabs.sendMessage(tab.id, { type: 'toggle-palette' });
+    } catch (e) {
+        // Content script may not be injected (e.g., chrome:// pages). Fall back to opening the options page.
+        console.warn('Web Command Palette: content script not reachable, opening options.', e);
+        chrome.runtime.openOptionsPage();
+    }
+});

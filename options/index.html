@@ -28,6 +28,21 @@
                     <textarea id="allowed-click-urls" rows="3" placeholder="^https://www\.google\.com&#10;^https://github\.com"></textarea>
                     <p style="font-size: 0.8em; color: #666; margin-top: 4px;">For security, "click" actions are converted to "focus" by default unless the URL matches one of these patterns.</p>
                 </div>
+                <div class="setting-group">
+                    <label>Active Item Highlight Style (CSS declarations):</label>
+                    <textarea id="nav-highlight-css" rows="3" placeholder="outline: 3px solid #ff00ff; outline-offset: 2px;"></textarea>
+                    <div style="margin-top: 4px;">
+                        <button id="reset-nav-highlight" type="button">Reset</button>
+                    </div>
+                    <p style="font-size: 0.8em; color: #666; margin-top: 4px;">Applied to the active element highlighted by j/k or Ctrl+Left/Right navigation. Use standard CSS declarations separated by semicolons.</p>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="nav-open-in-new-window">
+                        Open active link in a new window by default (Enter / v)
+                    </label>
+                    <p style="font-size: 0.8em; color: #666; margin-top: 4px;">When enabled, <code>Enter</code> / <code>v</code> opens the link in a new window, and <code>Shift+Enter</code> / <code>Shift+V</code> opens it in the current window. When disabled, the behavior is reversed.</p>
+                </div>
             </div>
     
             <div class="section">

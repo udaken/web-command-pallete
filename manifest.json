@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Web Command Palette",
 	"homepage_url": "https://github.com/udaken/web-command-pallete",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "A command palette for web pages.",
   "permissions": [
     "storage",
@@ -17,6 +17,9 @@
   "background": {
     "service_worker": "background.js",
     "scripts": ["background.js"]
+  },
+  "action": {
+    "default_title": "Web Command Palette"
   },
   "options_ui": {
     "page": "options/index.html",

@@ -3,6 +3,9 @@ const shortcutInput = document.getElementById('shortcut-input');
 const resetShortcutButton = document.getElementById('reset-shortcut');
 const excludedUrlsInput = document.getElementById('excluded-urls');
 const allowedClickUrlsInput = document.getElementById('allowed-click-urls');
+const navHighlightCssInput = document.getElementById('nav-highlight-css');
+const resetNavHighlightButton = document.getElementById('reset-nav-highlight');
+const navOpenInNewWindowInput = document.getElementById('nav-open-in-new-window');
 const siteInfoUrlsInput = document.getElementById('siteinfo-urls');
 const siteInfoJsonInput = document.getElementById('siteinfo-json');
 const updateAllButton = document.getElementById('update-all');
@@ -71,6 +74,8 @@ const DEFAULT_SHORTCUT = {
     code: 'KeyP'
 };
 
+const DEFAULT_NAV_HIGHLIGHT_CSS = 'outline: 3px solid #ff00ff; outline-offset: 2px; box-shadow: 0 0 10px 3px rgba(255, 0, 255, 0.5);';
+
 const SITEINFO_SCHEMA = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "array",
@@ -95,10 +100,10 @@ const SITEINFO_SCHEMA = {
                         "title": { "type": "string" },
                         "selector": { "type": "string", "description": "CSS Selector" },
                         "xpath": { "type": "string", "description": "XPath Expression" },
-                        "action": { 
-                            "type": "string", 
+                        "action": {
+                            "type": "string",
                             "enum": ["click", "focus", "copy-text"],
-                            "default": "click" 
+                            "default": "click"
                         }
                     },
                     "anyOf": [
@@ -106,6 +111,37 @@ const SITEINFO_SCHEMA = {
                         { "required": ["xpath"] }
                     ]
                 }
+            },
+            "navigation": {
+                "type": "object",
+                "description": "Item navigation triggered by Ctrl+Left/Right or j/k. Highlights and moves an active element across the matched items. Enter or v opens the link inside the active element.",
+                "properties": {
+                    "items": {
+                        "type": "object",
+                        "description": "Selector or XPath matching the list of navigable items",
+                        "properties": {
+                            "selector": { "type": "string", "description": "CSS Selector" },
+                            "xpath": { "type": "string", "description": "XPath Expression" }
+                        },
+                        "anyOf": [
+                            { "required": ["selector"] },
+                            { "required": ["xpath"] }
+                        ]
+                    },
+                    "link": {
+                        "type": "object",
+                        "description": "Selector or XPath (scoped to the active element) used to locate the link. If omitted, the first <a> element inside the active element is used.",
+                        "properties": {
+                            "selector": { "type": "string", "description": "CSS Selector" },
+                            "xpath": { "type": "string", "description": "XPath Expression" }
+                        },
+                        "anyOf": [
+                            { "required": ["selector"] },
+                            { "required": ["xpath"] }
+                        ]
+                    }
+                },
+                "required": ["items"]
             }
         }
     }
@@ -167,6 +203,10 @@ resetShortcutButton.addEventListener('click', () => {
     shortcutInput.value = formatShortcut(currentShortcut);
 });
 
+resetNavHighlightButton.addEventListener('click', () => {
+    navHighlightCssInput.value = DEFAULT_NAV_HIGHLIGHT_CSS;
+});
+
 // Load Settings
 async function loadSettings() {
     const data = await chrome.storage.local.get(['config', 'siteinfo', 'lastUpdated']);
@@ -185,6 +225,12 @@ async function loadSettings() {
 
     // 2.5 Allowed Click URLs
     allowedClickUrlsInput.value = config.allowedClickUrls || '';
+
+    // 2.6 Nav Highlight CSS
+    navHighlightCssInput.value = typeof config.navHighlightCss === 'string' ? config.navHighlightCss : DEFAULT_NAV_HIGHLIGHT_CSS;
+
+    // 2.7 Nav open in new window
+    navOpenInNewWindowInput.checked = !!config.navOpenInNewWindow;
 
     // 3. URLs
     siteInfoUrlsInput.value = (config.urls || []).join('\n');
@@ -312,6 +358,17 @@ function validateSiteInfo(json) {
         item.commands.forEach((cmd, cmdIndex) => {
             if (!cmd.xpath && !cmd.selector) throw new Error(`Item ${index}, Command ${cmdIndex}: Missing 'xpath' or 'selector'`);
         });
+        if (item.navigation) {
+            if (typeof item.navigation !== 'object') throw new Error(`Item ${index}: 'navigation' must be an object`);
+            const navItems = item.navigation.items;
+            if (!navItems || typeof navItems !== 'object') throw new Error(`Item ${index}: 'navigation.items' must be an object`);
+            if (!navItems.xpath && !navItems.selector) throw new Error(`Item ${index}: 'navigation.items' missing 'xpath' or 'selector'`);
+            if (item.navigation.link !== undefined) {
+                const link = item.navigation.link;
+                if (!link || typeof link !== 'object') throw new Error(`Item ${index}: 'navigation.link' must be an object`);
+                if (!link.xpath && !link.selector) throw new Error(`Item ${index}: 'navigation.link' missing 'xpath' or 'selector'`);
+            }
+        }
     });
     return true;
 }
@@ -381,6 +438,8 @@ const performUpdateAndSave = async () => {
             shortcut: currentShortcut,
             excludedUrls: excludedUrlsInput.value,
             allowedClickUrls: allowedClickUrlsInput.value,
+            navHighlightCss: navHighlightCssInput.value,
+            navOpenInNewWindow: navOpenInNewWindowInput.checked,
             trustedSources: trustedSources,
             urls: urls,
             localJson: siteInfoJsonInput.value
